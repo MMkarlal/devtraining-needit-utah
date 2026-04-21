@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_cb_topic">
+    <sys_cb_topic action="DELETE">
+        <applicability/>
+        <applicability_mode>query</applicability_mode>
+        <autopilot_topic>false</autopilot_topic>
+        <category/>
+        <channels/>
+        <connect_queue/>
+        <context_profiles/>
+        <description>Agent will Create a Change Request on the behalf of User </description>
+        <dialog_acts_enabled>true</dialog_acts_enabled>
+        <expose_on_palette>false</expose_on_palette>
+        <flexible_conversation_switching>false</flexible_conversation_switching>
+        <foundational>false</foundational>
+        <graph>{
+  "graph_api_version": "1.0.82",
+  "goals": {
+    "primary": {
+      "id": "primary",
+      "trigger": {
+        "type": "primary"
+      },
+      "name": "primary",
+      "applicability": "",
+      "description": "",
+      "nodes": {
+        "cbe7ea336f1f4c87bb14c4ed436c08f2": {
+          "id": "cbe7ea336f1f4c87bb14c4ed436c08f2",
+          "stepType": "Start",
+          "name": "Start",
+          "greetingResponse": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "7c1d29e524cc49ee87e75d4e64d6b276": {
+          "id": "7c1d29e524cc49ee87e75d4e64d6b276",
+          "stepType": "TerminateGoal",
+          "name": "End",
+          "confirmationMessage": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "2d4207eabbc74bdc8f0b611115642b14": {
+          "name": "Find a Request",
+          "prompt": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": "Find open Request"
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "skipReprompt": {
+            "value": "",
+            "mode": "query"
+          },
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "variableId": "b7be3b8fcd9e4fccbabe46fcdacc2240",
+          "detailDescription": "",
+          "id": "2d4207eabbc74bdc8f0b611115642b14",
+          "stepType": "ReferenceChoicePrompt",
+          "mode": "glide_record",
+          "script": "",
+          "metadataScript": "",
+          "cardData": {},
+          "isMultipleSelect": true,
+          "noRecordsResponseMsg": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaInputs.create_a_request}}",
+                      "displayValue": "Input Variables➛Create A Request"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "condition": {
+            "mode": "glide_scripted_query",
+            "value": "(function execute(table) {\n\n    var options = [];\n\n    // Get the logged-in user's sys_id\n    var loggedInUser = gs.getUserID();\n\n    // Query sc_request table\n    var reqGR = new GlideRecordSecure('sc_request');\n    reqGR.addQuery('requested_for', loggedInUser);\n\n    // Open requests only (exclude Closed / Complete)\n    reqGR.addQuery('state', '!=', '3'); // 3 = Closed Complete (adjust if needed)\n\n    reqGR.orderByDesc('sys_created_on');\n    reqGR.query();\n\n    while (reqGR.next()) {\n        options.push({\n            value: reqGR.getUniqueValue(),          // sys_id\n            label: reqGR.getValue('number')         // Request Number (REQxxxxx)\n        });\n    }\n\n    return options;\n\n})(table);"
+          },
+          "hasCardHeader": false,
+          "cardMetadata": {
+            "mode": "card",
+            "metadataScript": "",
+            "cardTemplate": "",
+            "cardFields": {},
+            "cardDefinition": {}
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false
+        }
+      },
+      "edges": [
+        {
+          "id": "18942335e513439b9d64dc6776b034ad",
+          "edgeType": "Edge",
+          "source": "cbe7ea336f1f4c87bb14c4ed436c08f2",
+          "target": "2d4207eabbc74bdc8f0b611115642b14",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "428b757f42ab4b8dbc59d5aeaf8965ce",
+          "edgeType": "Edge",
+          "source": "2d4207eabbc74bdc8f0b611115642b14",
+          "target": "7c1d29e524cc49ee87e75d4e64d6b276",
+          "sourcePort": "",
+          "targetPort": ""
+        }
+      ]
+    }
+  },
+  "variables": {
+    "current-user": {
+      "category": "vaInputs",
+      "id": "current-user",
+      "label": "User",
+      "name": "user",
+      "table": "sys_user",
+      "varType": "reference"
+    },
+    "b7be3b8fcd9e4fccbabe46fcdacc2240": {
+      "id": "b7be3b8fcd9e4fccbabe46fcdacc2240",
+      "name": "find_a_request",
+      "label": "Find A Request",
+      "varType": "array.reference",
+      "table": "sc_request",
+      "category": "vaInputs",
+      "autoSelect": false,
+      "autoSelectExpression": "",
+      "nodeId": "2d4207eabbc74bdc8f0b611115642b14",
+      "isHidden": false
+    }
+  }
+}</graph>
+        <key_phrases>Create a Change Request</key_phrases>
+        <library>false</library>
+        <live_agent>false</live_agent>
+        <model_type>nlu_keyword</model_type>
+        <modify_confirmation_enabled>true</modify_confirmation_enabled>
+        <name>Create a Change Request</name>
+        <nlu_intent/>
+        <nlu_intent_label/>
+        <nlu_model/>
+        <nlu_model_label/>
+        <nlu_provider/>
+        <palette_label/>
+        <roles/>
+        <root_topic_id/>
+        <secure_custom_input_control>false</secure_custom_input_control>
+        <source_topic_id/>
+        <sys_class_name>sys_cb_topic</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-04-09 16:01:31</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>98a6cc974708c710bd1c3b12d16d43f0</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Create a Change Request</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_update_name>sys_cb_topic_98a6cc974708c710bd1c3b12d16d43f0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-04-09 16:19:28</sys_updated_on>
+        <title>Create a Change Request</title>
+        <triggerable_by_notification>false</triggerable_by_notification>
+        <type>STANDARD</type>
+    </sys_cb_topic>
+    <sys_translated_text action="DELETE" query="documentkey=98a6cc974708c710bd1c3b12d16d43f0"/>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</application>
+        <file_path/>
+        <instance_id>cb9b8ceeeb0fa6989698ff72dad0cd16</instance_id>
+        <instance_name>dev351474</instance_name>
+        <name>sys_cb_topic_98a6cc974708c710bd1c3b12d16d43f0</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_cb_topic"><sys_cb_topic action="INSERT_OR_UPDATE"><applicability/><applicability_mode>query</applicability_mode><autopilot_topic>false</autopilot_topic><category/><channels/><connect_queue/><context_profiles/><description>Agent will Create a Change Request on the behalf of User </description><dialog_acts_enabled>true</dialog_acts_enabled><expose_on_palette>false</expose_on_palette><flexible_conversation_switching>false</flexible_conversation_switching><foundational>false</foundational><graph>{
+  "graph_api_version": "1.0.82",
+  "goals": {
+    "primary": {
+      "id": "primary",
+      "trigger": {
+        "type": "primary"
+      },
+      "name": "primary",
+      "applicability": "",
+      "description": "",
+      "nodes": {
+        "cbe7ea336f1f4c87bb14c4ed436c08f2": {
+          "id": "cbe7ea336f1f4c87bb14c4ed436c08f2",
+          "stepType": "Start",
+          "name": "Start",
+          "greetingResponse": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "7c1d29e524cc49ee87e75d4e64d6b276": {
+          "id": "7c1d29e524cc49ee87e75d4e64d6b276",
+          "stepType": "TerminateGoal",
+          "name": "End",
+          "confirmationMessage": {
+            "mode": "simple",
+            "value": ""
+          }
+        },
+        "2d4207eabbc74bdc8f0b611115642b14": {
+          "name": "Find a Request",
+          "prompt": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": "Find open Request"
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "confirmMessage": {
+            "value": "",
+            "mode": "simple"
+          },
+          "acknowledgeMsg": {
+            "value": "",
+            "mode": "simple"
+          },
+          "applicability": {
+            "value": "",
+            "mode": "query"
+          },
+          "skippable": {
+            "value": "",
+            "mode": "query"
+          },
+          "skipReprompt": {
+            "value": "",
+            "mode": "query"
+          },
+          "defaultValue": {
+            "value": "",
+            "mode": "simple"
+          },
+          "variableId": "b7be3b8fcd9e4fccbabe46fcdacc2240",
+          "detailDescription": "",
+          "id": "2d4207eabbc74bdc8f0b611115642b14",
+          "stepType": "ReferenceChoicePrompt",
+          "mode": "glide_record",
+          "script": "",
+          "metadataScript": "",
+          "cardData": {},
+          "isMultipleSelect": true,
+          "noRecordsResponseMsg": {
+            "value": [
+              {
+                "type": "paragraph",
+                "children": [
+                  {
+                    "text": ""
+                  },
+                  {
+                    "type": "datapill",
+                    "dataPill": {
+                      "value": "{{vaInputs.create_a_request}}",
+                      "displayValue": "Input Variables➛Create A Request"
+                    },
+                    "children": [
+                      {
+                        "text": ""
+                      }
+                    ]
+                  },
+                  {
+                    "text": ""
+                  }
+                ]
+              }
+            ],
+            "mode": "simple"
+          },
+          "condition": {
+            "mode": "glide_scripted_query",
+            "value": "(function execute(table) {\n\n    var options = [];\n\n    // Get the logged-in user's sys_id\n    var loggedInUser = gs.getUserID();\n\n    // Query sc_request table\n    var reqGR = new GlideRecordSecure('sc_request');\n    reqGR.addQuery('requested_for', loggedInUser);\n\n    // Open requests only (exclude Closed / Complete)\n    reqGR.addQuery('state', '!=', '3'); // 3 = Closed Complete (adjust if needed)\n\n    reqGR.orderByDesc('sys_created_on');\n    reqGR.query();\n\n    while (reqGR.next()) {\n        options.push({\n            value: reqGR.getUniqueValue(),          // sys_id\n            label: reqGR.getValue('number')         // Request Number (REQxxxxx)\n        });\n    }\n\n    return options;\n\n})(table);"
+          },
+          "hasCardHeader": false,
+          "cardMetadata": {
+            "mode": "card",
+            "metadataScript": "",
+            "cardTemplate": "",
+            "cardFields": {},
+            "cardDefinition": {}
+          },
+          "withNluUserInput": false,
+          "skipIfFulfilled": false
+        }
+      },
+      "edges": [
+        {
+          "id": "18942335e513439b9d64dc6776b034ad",
+          "edgeType": "Edge",
+          "source": "cbe7ea336f1f4c87bb14c4ed436c08f2",
+          "target": "2d4207eabbc74bdc8f0b611115642b14",
+          "sourcePort": "",
+          "targetPort": ""
+        },
+        {
+          "id": "428b757f42ab4b8dbc59d5aeaf8965ce",
+          "edgeType": "Edge",
+          "source": "2d4207eabbc74bdc8f0b611115642b14",
+          "target": "7c1d29e524cc49ee87e75d4e64d6b276",
+          "sourcePort": "",
+          "targetPort": ""
+        }
+      ]
+    }
+  },
+  "variables": {
+    "current-user": {
+      "category": "vaInputs",
+      "id": "current-user",
+      "label": "User",
+      "name": "user",
+      "table": "sys_user",
+      "varType": "reference"
+    },
+    "b7be3b8fcd9e4fccbabe46fcdacc2240": {
+      "id": "b7be3b8fcd9e4fccbabe46fcdacc2240",
+      "name": "find_a_request",
+      "label": "Find A Request",
+      "varType": "array.reference",
+      "table": "sc_request",
+      "category": "vaInputs",
+      "autoSelect": false,
+      "autoSelectExpression": "",
+      "nodeId": "2d4207eabbc74bdc8f0b611115642b14",
+      "isHidden": false
+    }
+  }
+}</graph><key_phrases>Create a Change Request</key_phrases><library>false</library><live_agent>false</live_agent><model_type>nlu_keyword</model_type><modify_confirmation_enabled>true</modify_confirmation_enabled><name>Create a Change Request</name><nlu_intent/><nlu_intent_label/><nlu_model/><nlu_model_label/><nlu_provider/><palette_label/><roles/><root_topic_id/><secure_custom_input_control>false</secure_custom_input_control><source_topic_id/><sys_class_name>sys_cb_topic</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-04-09 16:01:31</sys_created_on><sys_domain>global</sys_domain><sys_id>98a6cc974708c710bd1c3b12d16d43f0</sys_id><sys_mod_count>2</sys_mod_count><sys_name>Create a Change Request</sys_name><sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package><sys_policy/><sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope><sys_update_name>sys_cb_topic_98a6cc974708c710bd1c3b12d16d43f0</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-04-09 16:19:28</sys_updated_on><title>Create a Change Request</title><triggerable_by_notification>false</triggerable_by_notification><type>STANDARD</type></sys_cb_topic><sys_translated_text action="delete_multiple" query="documentkey=98a6cc974708c710bd1c3b12d16d43f0"/></record_update>]]></payload>
+        <payload_hash>-1158183435</payload_hash>
+        <record_name>Create a Change Request</record_name>
+        <reverted_from/>
+        <source>aa10952647c08310bd1c3b12d16d4395</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-04-09 16:19:28</sys_created_on>
+        <sys_id>9bba04134748c710bd1c3b12d16d4390</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19d730a9cb40000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-04-09 16:19:28</sys_updated_on>
+        <type>Topic</type>
+        <update_guid>1bba04132748c7107c26ab4f5fc6538f</update_guid>
+        <update_guid_history>1bba04132748c7107c26ab4f5fc6538f:-1158183435,b64a4c9f6408c710e15ce2d39aa24294:-1171359119,90a6cc97bc08c7101006ff6f825049f3:-1461695129</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-04-09 16:20:51</sys_created_on>
+        <sys_db_object display_value="" name="sys_cb_topic">sys_cb_topic</sys_db_object>
+        <sys_id>2f6a0d88387d4c0384beec165a7208e9</sys_id>
+        <sys_metadata>98a6cc974708c710bd1c3b12d16d43f0</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Create a Change Request</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_scope_delete display_value="">94872a8897db403e8ee69a431de2fca4</sys_scope_delete>
+        <sys_update_name>sys_cb_topic_98a6cc974708c710bd1c3b12d16d43f0</sys_update_name>
+        <sys_update_version display_value="sys_cb_topic_98a6cc974708c710bd1c3b12d16d43f0">9bba04134748c710bd1c3b12d16d4390</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-04-09 16:20:51</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
